@@ -1,0 +1,25 @@
+textarea {
+    min-height: 400px;
+}
+
+.email-list-item-read, .email-list-item-unread {
+  background-color: transparent;
+  border-color: silver;
+  border-style: solid;
+  border-radius: 10px;
+  border-width: 1px;
+  margin-top: 5px;
+  padding: 12px;
+}
+.email-list-item-read .timestamp, .email-list-item-unread .timestamp {
+  float: right;
+  text-align: right;
+}
+
+.email-list-item-read:hover, .email-list-item-unread:hover {
+  background-color: rgba(155,157,158,0.46);
+}
+
+.email-list-item-unread {
+  background-color: #949494;
+}
