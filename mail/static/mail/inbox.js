@@ -80,30 +80,65 @@ function load_email(id) {
         .then(response => response.json())
         .then(email => {
 
-            // show email and hide other views
             document.querySelector('#emails-view').style.display = 'none';
             document.querySelector('#compose-view').style.display = 'none';
             document.querySelector('#email-view').style.display = 'block';
 
-            // display email
             const view = document.querySelector('#email-view');
             view.innerHTML = `
-                <ul class="list-group">
-                    <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
-                    <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
-                    <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
-                    <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
-                    <li class="list-group-item ">${email['body']}</li>
-                    </ul>
-                
+                <p class="p_mail">From:  <span>${email['sender']}</span></p>
+                <p class="p_mail">To: <span>${email['recipients']}</span></p>
+                <p class="p_mail">Subject: <span>${email['subject']}</span></p>
+                <p class="p_mail">Time: <span>${email['timestamp']}</span></p> 
+                <p class="p_mail">Email Body:</p>
+                <p>${email['body']}</p>
                 `;
+
+            let reply = document.createElement('button');
+            reply.className = "btn btn-outline-primary m-1 float-right";
+            reply.innerHTML = 'Reply';
+            reply.addEventListener('click',
+                ()=>{
+                    document.querySelector('#compose-view').style.display = 'block';
+                    document.querySelector('#email-view').style.display = 'none';
+
+                    let from = document.querySelector('#from').value
+                    if (email['sender'] === from){
+                        document.querySelector('#compose-recipients').value = email['recipients']
+                    }else{
+                        document.querySelector('#compose-recipients').value = email['sender']
+                    }
+
+                    let subject = email['subject'];
+                    if (subject.split(" ", 1)[0] !== "Re:") {
+                        subject = "Re: " + subject;
+                    }
+                    document.querySelector('#compose-subject').value = subject
+                })
+            view.appendChild(reply)
+
+            let archive_btn = document.createElement('button');
+            archive_btn.className = "btn btn-outline-primary m-1";
+            archive_btn.innerHTML = !email['archived'] ? 'Archive' : 'Unarchive';
+            archive_btn.addEventListener('click',
+                ()=>{
+                    fetch('/emails/'+ id,{
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            archived : !email['archived']
+                        })
+                    }).then(response => load_mailbox('inbox'))
+                })
+            view.appendChild(archive_btn)
+
             if (!email['read']) {
-                fetch('/emails/' + email['id'], {
+                fetch('/emails/' + id, {
                     method: 'PUT',
                     body: JSON.stringify({read: true})
                 })
             }
         })
+
 }
 
 

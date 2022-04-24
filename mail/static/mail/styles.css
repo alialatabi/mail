@@ -23,3 +23,9 @@ textarea {
 .email-list-item-unread {
   background-color: #949494;
 }
+span{
+  font-weight: normal;
+}
+.p_mail{
+  font-weight: bold;
+}
